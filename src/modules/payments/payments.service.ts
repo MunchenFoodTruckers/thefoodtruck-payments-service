@@ -25,20 +25,20 @@ export class UpaymentsService {
     if (this.useInMemory) {
       return this.inMemory.findAll();
     }
-    return this.prisma.payments.findMany();
+    return this.prisma.payment.findMany();
   }
 
   async findOne(id: string) {
     if (this.useInMemory) {
       return this.inMemory.findById(id);
     }
-    return this.prisma.payments.findUnique({ where: { id } });
+    return this.prisma.payment.findUnique({ where: { id } });
   }
 
   async create(data: any) {
     if (this.useInMemory) {
       return this.inMemory.create(data);
     }
-    return this.prisma.payments.create({ data });
+    return this.prisma.payment.create({ data });
   }
 }
