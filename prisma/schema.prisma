@@ -8,10 +8,46 @@ datasource db {
 }
 
 model Payment {
+  id              String   @id @default(uuid())
+  orderId         String   @unique
+  userId          String
+  amount          Float
+  currency        String   @default("EUR")
+  status          String   // pending, completed, failed, refunded
+  paymentMethod   String   // card, paypal, apple_pay, google_pay
+  paymentMethodId String?
+  transactionId   String?  @unique
+  subtotal        Float
+  tax             Float
+  deliveryFee     Float
+  tip             Float    @default(0)
+  discount        Float    @default(0)
+  promoCode       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  refunds         Refund[]
+}
+
+model PaymentMethod {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // card, paypal
+  last4       String?  // Last 4 digits for cards
+  brand       String?  // visa, mastercard, amex
+  expiryMonth Int?
+  expiryYear  Int?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Refund {
   id        String   @id @default(uuid())
-  orderId   String   @unique
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   amount    Float
-  status    String   // pending, completed, refunded
-  method    String   // card, cash
+  reason    String
+  status    String   // pending, completed, failed
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
